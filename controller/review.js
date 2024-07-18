@@ -6,7 +6,6 @@ const Product=model_2.Product
 exports.addReview=async (req,res)=>{
     const item=req.params.search;
     const updateVisitor = await Product.findOneAndUpdate(
-      
         {
           title: item
         },
@@ -15,7 +14,7 @@ exports.addReview=async (req,res)=>{
            reviews: req.body
           }
         },
-          console.log(req.body,"   working   ",item))
+          console.log(req.body, "   working   ", item))
     // const product=await Product.findOne({title : item});
     // var x =JSON.parse(JSON.stringify(product));
    

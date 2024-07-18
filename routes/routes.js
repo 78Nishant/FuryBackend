@@ -9,15 +9,22 @@ router
 .get('/',productController.getallproducts)
 .get('/search/:search',productController.getByTag)
 .get('/name/:search',productController.getByName)
-.post('/log',logController.verification)
-.get('/logs',logController.getLog)
+//log data
+.get('/user',logController.user) //check current loggedin user
+.post('/login',logController.login)  //to login a user
+.get('/logs',logController.getLog)  //to get all registered user
+.post('/logout/:email',logController.logout) //to logout a user
+.post('/newUser',logController.signup) //to register a user
+.post('/usercart/:email',logController.addtoCart) //cart of a user
+.post('/mycart/delete',logController.deleteProduct)
+//product related
 .post('/',productController.addProduct)
 .post('/review/:search',reviewController.addReview)
 .get('/review',reviewController.getReview)
 // cart related
 .get('/mycart',cartController.getCartProducts)
 .post('/mycart',cartController.addProduct)
-.delete('/mycart/:item',cartController.deleteProduct)
+
 .delete('/mycart/all',cartController.deleteAll)
 
 exports.router=router;
