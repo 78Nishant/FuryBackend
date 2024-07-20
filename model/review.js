@@ -6,16 +6,6 @@ const reviewSchema = new Schema({
     comment: String,
     reviewerName: String,
     reviewerEmail: String,
-    title:String,
+
 });
 exports.Review = mongoose.model('Review', reviewSchema);
-
-// id: Number,
-//     brand: String,
-//     sku: String,
-//     weight: Number,
-//     dimensions:Object,
-//     warrantyInformation: String,
-//     shippingInformation: String,
-//     availabilityStatus: String,
-//     reviews:Array

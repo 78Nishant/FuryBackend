@@ -1,14 +1,35 @@
 const model=require('../model/log');
 const Log=model.Log;
+var jwt = require('jsonwebtoken');
+var jwtdecode=require('jwt-decode')
+require('dotenv').config();
 
+//To get info about all users
 exports.getLog=async (req,res)=>{
     const log=await Log.find();
     res.json(log);
 }
-exports.user=async (req,res)=>{
-    const user=await Log.findOne({loggedIn: "true"});
-    res.status(200).json(user);
+//to get info about current user(old method)
+// exports.user=async (req,res)=>{
+//     const user=await Log.findOne({loggedIn: "true"});
+//     res.status(200).json(user);
+// }
+
+
+//To get info about active user
+exports.activeUser=async(req,res)=>{
+    const {authID}=req.body;
+    try{
+    var decoded_authID=JSON.parse(atob(authID.split('.')[1])); //to decode json back from jwt token
+    const user_name=decoded_authID.UserName;
+    const userdata=await Log.findOne({name:user_name});
+    res.status(200).json(userdata);
+    }
+    catch(error){
+        res.json(null)
+    }
 }
+//Login 
 exports.login=async (req, res) => {
     try {
     const { email, password } = req.body;
@@ -20,7 +41,9 @@ exports.login=async (req, res) => {
             {"email":email },
             { $set: { loggedIn: "true" } } 
           );
-    return res.status(200).json( `Welcome Back! ${name}`);
+    var token =await jwt.sign({UserName: name}, process.env.Secret_key);
+
+    return res.status(200).json( token);
     }
     else{
         return res.status(200).json({message: 'No user found ! Try Signing up'})
@@ -31,11 +54,13 @@ exports.login=async (req, res) => {
     res.status(550).json({ error: 'An error occurred while registering the user' });
     }
    };
+//Signup - Register a new user
 exports.signup=async(req,res)=>{
     const newUser=new Log(req.body);
     await newUser.save();
     res.status(200).json({ message: 'User registered successfully' })
 }
+//Logout the current user
 exports.logout=async(req,res)=>{
     const email=req.params.email
     await Log.updateOne(
@@ -43,30 +68,4 @@ exports.logout=async(req,res)=>{
         { $set: { loggedIn: "false" } } 
       );
       res.status(200).json("Logged out")
-}
-//Add product to cart
-exports.addtoCart=async(req,res)=>{
-    const item=req.body;
-    const emailSearched=req.params.email;
-    // console.log(item);
-    console.log(emailSearched)
-    const details=await Log.findOneAndUpdate(
-        {
-          email: emailSearched
-        },
-        {   
-          $push:{
-           CartDetails: item
-          }
-        },
-    )
-    res.status(200).json(details)
-}
-//Delete product from cart
-exports.deleteProduct=async(req,res)=>{
-    const {item_name,user_email} =req.body;
-    console.log(item_name);
-    console.log(user_email);
-    const newcart=await Log.findOneAndUpdate({email: user_email}, { $pull:{CartDetails : {title: item_name} } })
-    res.json(newcart);
 }

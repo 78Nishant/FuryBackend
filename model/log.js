@@ -2,7 +2,6 @@ const mongoose= require('mongoose');
 const { Schema } = mongoose;
 
 const logSchema = new Schema({
-    loggedIn:String,
     name:String,
     phone:Number,
     email:String,
