@@ -56,9 +56,11 @@ exports.login=async (req, res) => {
    };
 //Signup - Register a new user
 exports.signup=async(req,res)=>{
-    const newUser=new Log(req.body);
+    const {name}=req.body;
+    const newUser= new Log(req.body);
     await newUser.save();
-    res.status(200).json({ message: 'User registered successfully' })
+    var token =await jwt.sign({UserName: name}, process.env.Secret_key);
+    res.status(200).json(token);
 }
 //Logout the current user
 exports.logout=async(req,res)=>{
